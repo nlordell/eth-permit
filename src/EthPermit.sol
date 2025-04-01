@@ -15,6 +15,7 @@ contract EthPermit {
         keccak256("EthPermit(address owner,address spender,uint256 wrap,uint256 value,uint256 nonce,uint256 deadline)");
 
     address private immutable _SELF;
+    bytes32 private immutable _CODE;
     address private immutable _WETH;
 
     error Expired();
@@ -23,6 +24,7 @@ contract EthPermit {
 
     constructor(address weth) {
         _SELF = address(this);
+        _CODE = keccak256(abi.encodePacked(hex"ef0100", this));
         _WETH = weth;
     }
 
@@ -39,7 +41,7 @@ contract EthPermit {
     }
 
     function getNonce() external view returns (uint256) {
-        require(address(this) != _SELF, NotDelegated());
+        require(address(this).codehash == _CODE, NotDelegated());
         return _$().nonce;
     }
 

@@ -134,6 +134,10 @@ contract EthPermitTest is Test {
 
         vm.expectRevert(EthPermit.NotDelegated.selector);
         ethPermit.getNonce();
+
+        vm.expectRevert(EthPermit.NotDelegated.selector);
+        (bool success,) = address(ethPermit).delegatecall(abi.encodeCall(ethPermit.getNonce, ()));
+        assert(success);
     }
 
     function test_getDomainSeparator() public view {
